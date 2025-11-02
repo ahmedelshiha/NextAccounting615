@@ -3,17 +3,27 @@
 import type { Column, RowAction } from '@/types/dashboard'
 
 import { useMemo, useState } from 'react'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { ChevronDown, ChevronUp, List, Grid3x3 } from 'lucide-react'
 import { useTranslations } from '@/lib/i18n'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
+import { Button } from '@/components/ui/button'
 
 /**
  * Generic, lightweight table used across admin lists. Supports optional
  * selection, basic column sorting, and per-row actions. Visual style is
  * intentionally minimal and matches existing tokens.
+ *
+ * On mobile, switches to card/stack view for better readability.
  */
 export default function DataTable<T extends { id?: string | number }>({ columns, rows, loading, sortBy, sortOrder = 'asc', onSort, actions = [], selectable = false, onSelectionChange }: { columns: Column<T>[]; rows: T[]; loading?: boolean; sortBy?: string; sortOrder?: 'asc' | 'desc'; onSort?: (key: string) => void; actions?: RowAction<T>[]; selectable?: boolean; onSelectionChange?: (ids: Array<string | number>) => void }) {
   const { t } = useTranslations()
   const [selected, setSelected] = useState<Set<string | number>>(new Set())
+  const [viewMode, setViewMode] = useState<'table' | 'cards'>('table')
+  const isMobile = useMediaQuery('(max-width: 768px)')
+
+  // Auto-switch to card view on mobile
+  const currentViewMode = isMobile ? 'cards' : viewMode
+
   const allSelected = useMemo(() => rows.length > 0 && selected.size === rows.length, [rows.length, selected])
 
   const toggleAll = () => {
