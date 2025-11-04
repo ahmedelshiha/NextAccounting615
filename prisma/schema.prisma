@@ -103,6 +103,12 @@ model User {
   @@index([tenantId, experienceYears])
   @@index([tenantId, availabilityStatus, createdAt])
   @@index([tenantId, role, createdAt])
+  // Phase 4.3: Server-side filtering optimization indexes
+  @@index([tenantId, email], name: "idx_users_tenantid_email")
+  @@index([tenantId, name], name: "idx_users_tenantid_name")
+  @@index([tenantId, role, availabilityStatus], name: "idx_users_tenantid_role_status")
+  @@index([tenantId, tier, createdAt(sort: Desc)], name: "idx_users_tenantid_tier_created")
+  @@index([tenantId, department, createdAt(sort: Desc)], name: "idx_users_tenantid_department_created")
   @@map("users")
 }
 
