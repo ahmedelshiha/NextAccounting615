@@ -5,7 +5,6 @@ import { Loader2 } from 'lucide-react'
 import type { UserItem } from '../../contexts/UsersContextProvider'
 import { useUsersContext } from '../../contexts/UsersContextProvider'
 import { useWorkstationContext } from '../../contexts/WorkstationContext'
-import { useDashboardMetrics } from '../../hooks'
 import { WorkstationLayout } from './WorkstationLayout'
 import { WorkstationSidebar } from './WorkstationSidebar'
 import { WorkstationInsightsPanel } from './WorkstationInsightsPanel'
@@ -55,8 +54,6 @@ export function WorkstationIntegrated({
 }: WorkstationIntegratedProps) {
   const context = useUsersContext()
   const workstationContext = useWorkstationContext()
-  const { data: metricsData } = useDashboardMetrics()
-
 
   // Filter state from context
   const [filters, setFilters] = useState<UserFilters>(() => {
@@ -132,6 +129,11 @@ export function WorkstationIntegrated({
     }
   }, [users, workstationContext])
 
+  // Clear selection
+  const handleClearSelection = useCallback(() => {
+    workstationContext.setSelectedUserIds(new Set())
+  }, [workstationContext])
+
   // Apply bulk action
   const handleApplyBulkAction = useCallback(async () => {
     if (!workstationContext.bulkActionType || workstationContext.selectedUserIds.size === 0) {
@@ -142,7 +144,7 @@ export function WorkstationIntegrated({
     try {
       await workstationContext.applyBulkAction()
       toast.success('Bulk action applied successfully')
-      workstationContext.setSelectedUserIds(new Set())
+      handleClearSelection()
     } catch (error) {
       toast.error('Failed to apply bulk action')
       console.error('Bulk action error:', error)
@@ -170,7 +172,7 @@ export function WorkstationIntegrated({
 
   // Memoized main content
   const mainContent = (
-    <div className="workstation-main-wrapper flex flex-col h-full gap-4 overflow-y-auto">
+    <div className="workstation-main-wrapper flex flex-col h-full gap-4 overflow-y-auto" data-testid="workstation-main-content">
       <QuickActionsBar
         onAddUser={onAddUser}
         onImport={onImport}
@@ -178,6 +180,7 @@ export function WorkstationIntegrated({
         onExport={onExport}
         onRefresh={handleRefresh}
         isLoading={isLoading}
+        data-testid="quick-actions-bar"
       />
 
       <OperationsOverviewCards
@@ -188,10 +191,11 @@ export function WorkstationIntegrated({
           dueThisWeek: 0,
         }}
         isLoading={isLoading}
+        data-testid="operations-overview-cards"
       />
 
-      <div className="workstation-table-section flex-1 flex flex-col min-h-0">
-        <h2 className="text-lg font-semibold mb-4">User Directory</h2>
+      <div className="workstation-table-section flex-1 flex flex-col min-h-0" data-testid="user-directory-section">
+        <h2 className="text-lg font-semibold mb-4" data-testid="user-directory-title">User Directory</h2>
         <div className="flex-1 overflow-y-auto">
           {isLoading ? (
             <div className="flex items-center justify-center h-full">
@@ -220,7 +224,6 @@ export function WorkstationIntegrated({
           isOpen={workstationContext.insightsPanelOpen}
           onClose={() => workstationContext.setInsightsPanelOpen(false)}
           stats={stats}
-          analyticsData={metricsData}
         />
       </Suspense>
     </div>

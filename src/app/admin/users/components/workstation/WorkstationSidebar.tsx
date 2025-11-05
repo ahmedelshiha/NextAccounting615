@@ -16,24 +16,22 @@ export const WorkstationSidebar = memo(function WorkstationSidebar({
   onAddUser,
   onReset,
 }: WorkstationSidebarProps) {
+  // Helper to safely extract string filter values
+  const getFilterValue = (value: any): string | undefined => {
+    return typeof value === 'string' ? value : undefined
+  }
+
   const handleViewChange = useCallback((viewName: string, roleFilter?: string) => {
     if (onFiltersChange) {
-      const current: AUserFilters = {
-        search: (filters as any)?.search || '',
-        role: (filters as any)?.role ?? (typeof (filters as any)?.roleFilter === 'string' ? (filters as any)?.roleFilter : undefined),
-        status: (filters as any)?.status ?? (typeof (filters as any)?.statusFilter === 'string' ? (filters as any)?.statusFilter : undefined),
-        department: (filters as any)?.department ?? (typeof (filters as any)?.departmentFilter === 'string' ? (filters as any)?.departmentFilter : undefined),
-        dateRange: (filters as any)?.dateRange,
-      }
       onFiltersChange({
-        ...current,
+        search: '',
         role: roleFilter || undefined,
         status: undefined,
         department: undefined,
-        search: '',
+        dateRange: 'all',
       } as any)
     }
-  }, [filters, onFiltersChange])
+  }, [onFiltersChange])
 
   const handleResetClick = useCallback(() => {
     if (onFiltersChange) {
@@ -44,29 +42,31 @@ export const WorkstationSidebar = memo(function WorkstationSidebar({
     }
   }, [onFiltersChange, onReset])
 
+  // Map filters from WorkstationIntegrated format to AdvancedUserFilters format
   const mappedFilters: AUserFilters = useMemo(() => ({
-    search: (filters as any)?.search || '',
-    role: (filters as any)?.role ?? (typeof (filters as any)?.roleFilter === 'string' ? (filters as any)?.roleFilter : undefined),
-    status: (filters as any)?.status ?? (typeof (filters as any)?.statusFilter === 'string' ? (filters as any)?.statusFilter : undefined),
-    department: (filters as any)?.department ?? (typeof (filters as any)?.departmentFilter === 'string' ? (filters as any)?.departmentFilter : undefined),
-    dateRange: (filters as any)?.dateRange,
+    search: getFilterValue((filters as any)?.search) || '',
+    role: getFilterValue((filters as any)?.role),
+    status: getFilterValue((filters as any)?.status),
+    department: getFilterValue((filters as any)?.department),
+    dateRange: getFilterValue((filters as any)?.dateRange),
   }), [filters])
 
   return (
-    <div className="workstation-sidebar-content">
+    <div className="workstation-sidebar-content" data-testid="workstation-sidebar">
       {/* Close Button - Mobile Only */}
       <button
         className="sidebar-close-btn md:hidden"
         onClick={onClose}
         aria-label="Close sidebar"
+        data-testid="sidebar-close-btn"
       >
         <X size={20} />
       </button>
 
       {/* Quick Stats Section */}
-      <div className="sidebar-section">
+      <div className="sidebar-section" data-testid="quick-stats-section">
         <h3 className="sidebar-title">Quick Stats</h3>
-        <div className="sidebar-stats-container">
+        <div className="sidebar-stats-container" data-testid="stats-container">
           {stats && (
             <>
               <div className="stat-item">
@@ -105,9 +105,9 @@ export const WorkstationSidebar = memo(function WorkstationSidebar({
       />
 
       {/* Filters Section - Scrollable */}
-      <div className="sidebar-section sidebar-filters flex-1 overflow-y-auto">
+      <div className="sidebar-section sidebar-filters flex-1 overflow-y-auto" data-testid="filters-section">
         <h3 className="sidebar-title">Filters</h3>
-        <div className="sidebar-filters-container">
+        <div className="sidebar-filters-container" data-testid="filters-container">
           <AdvancedUserFilters
             filters={mappedFilters}
             onFiltersChange={(f) => onFiltersChange?.(f as any)}
@@ -117,11 +117,12 @@ export const WorkstationSidebar = memo(function WorkstationSidebar({
       </div>
 
       {/* Footer - Reset Button */}
-      <div className="sidebar-footer">
+      <div className="sidebar-footer" data-testid="sidebar-footer">
         <button
           className="sidebar-reset-btn"
           onClick={handleResetClick}
           aria-label="Reset all filters"
+          data-testid="reset-filters-btn"
         >
           Reset Filters
         </button>
@@ -129,64 +130,3 @@ export const WorkstationSidebar = memo(function WorkstationSidebar({
     </div>
   )
 })
-
-// Add missing styles to workstation.css
-const additionalStyles = `
-.sidebar-close-btn {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  padding: 0.5rem;
-  background: var(--muted);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.sidebar-close-btn:hover {
-  background: var(--accent);
-}
-
-.sidebar-saved-views {
-  margin: 0;
-  padding: 0;
-  border: none;
-}
-
-.filter-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.filter-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--muted-foreground);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.filter-input,
-.filter-select {
-  padding: 0.5rem 0.75rem;
-  background: var(--muted);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: 0.875rem;
-  color: var(--foreground);
-  transition: border-color 0.2s ease;
-}
-
-.filter-input:focus,
-.filter-select:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px var(--primary-light);
-}
-
-.filter-input::placeholder {
-  color: var(--muted-foreground);
-}
-`
