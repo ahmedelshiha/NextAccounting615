@@ -2,9 +2,9 @@
 
 import { memo, useCallback, useMemo } from 'react'
 import { X } from 'lucide-react'
-import type { WorkstationSidebarProps } from '../../types/workstation'
+import type { WorkstationSidebarProps, UserFilters } from '../../types/workstation'
 import { SavedViewsButtons } from './SavedViewsButtons'
-import { AdvancedUserFilters, type UserFilters as AUserFilters } from '../AdvancedUserFilters'
+import { AdvancedUserFilters } from '../AdvancedUserFilters'
 import './workstation.css'
 
 export const WorkstationSidebar = memo(function WorkstationSidebar({
