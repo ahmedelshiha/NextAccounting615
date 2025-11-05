@@ -856,7 +856,7 @@ textarea:focus-visible,
    ============================================================================ */
 
 .stats-refresh-btn {
-  padding: 0.25rem;
+  padding: 0.5rem;
   background: none;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
@@ -867,6 +867,8 @@ textarea:focus-visible,
   justify-content: center;
   transition: all 0.2s ease;
   line-height: 1;
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .stats-refresh-btn:hover:not(:disabled) {
@@ -875,7 +877,7 @@ textarea:focus-visible,
   border-color: var(--primary);
 }
 
-.stats-refresh-btn:focus:not(:disabled) {
+.stats-refresh-btn:focus-visible:not(:disabled) {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
