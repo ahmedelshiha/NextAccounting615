@@ -80,13 +80,17 @@ export function QuickActionsBar({
 
           <Button
             onClick={onRefresh}
-            disabled={isLoading}
+            disabled={isLoading || isRefreshing}
             variant="ghost"
-            className="text-gray-700 hover:bg-gray-100 h-10 w-10 p-0"
-            title="Refresh data"
-            aria-label="Refresh data"
+            className="text-gray-700 hover:bg-gray-100 h-10 w-10 p-0 transition-transform"
+            title={isRefreshing ? 'Refreshing data...' : 'Refresh data'}
+            aria-label={isRefreshing ? 'Refreshing data...' : 'Refresh data'}
           >
-            <RefreshCw className="w-5 h-5" />
+            {isRefreshing ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              <RefreshCw className="w-5 h-5" />
+            )}
           </Button>
 
           <Button
