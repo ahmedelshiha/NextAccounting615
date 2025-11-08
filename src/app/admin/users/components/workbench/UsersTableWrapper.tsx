@@ -6,6 +6,9 @@ import { UsersTable } from '../UsersTable'
 import { UserItem } from '../../contexts/UsersContextProvider'
 import { UserProfileDialog } from '../UserProfileDialog'
 import DirectoryHeader from './DirectoryHeader'
+import { useUserActions } from '../../hooks/useUserActions'
+import { deleteUser as deleteUserApi } from './api/users'
+import { toast } from 'sonner'
 
 interface UsersTableWrapperProps {
   selectedUserIds?: Set<string>
