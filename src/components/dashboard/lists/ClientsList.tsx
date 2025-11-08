@@ -175,6 +175,62 @@ export default function ClientsList() {
           </div>
         </div>
       )}
+
+      {/* Role modal */}
+      <Dialog open={isRoleModalOpen} onOpenChange={setIsRoleModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t('dashboard.setRole')}</DialogTitle>
+            <DialogDescription>{t('dashboard.setRoleConfirm', { count: selectedIds.length })}</DialogDescription>
+          </DialogHeader>
+
+          <div className="p-4">
+            <Select value={selectedBulkRole || undefined} onValueChange={(v) => setSelectedBulkRole(v || null)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder={t('common.selectRole')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ADMIN">Admin</SelectItem>
+                <SelectItem value="STAFF">Staff</SelectItem>
+                <SelectItem value="CLIENT">Client</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsRoleModalOpen(false)}>{t('common.cancel')}</Button>
+            <Button onClick={applyRoleBulk} disabled={!selectedBulkRole}>{t('common.apply')}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Status modal */}
+      <Dialog open={isStatusModalOpen} onOpenChange={setIsStatusModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t('dashboard.setStatus')}</DialogTitle>
+            <DialogDescription>{t('dashboard.setStatusConfirm', { count: selectedIds.length })}</DialogDescription>
+          </DialogHeader>
+
+          <div className="p-4">
+            <Select value={selectedBulkStatus || undefined} onValueChange={(v) => setSelectedBulkStatus(v || null)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder={t('common.selectStatus')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ACTIVE">Active</SelectItem>
+                <SelectItem value="INACTIVE">Inactive</SelectItem>
+                <SelectItem value="SUSPENDED">Suspended</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsStatusModalOpen(false)}>{t('common.cancel')}</Button>
+            <Button onClick={applyStatusBulk} disabled={!selectedBulkStatus}>{t('common.apply')}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
