@@ -7,6 +7,8 @@ import { OverviewTab } from '../UserProfileDialog/OverviewTab'
 import { DetailsTab } from '../UserProfileDialog/DetailsTab'
 import { ActivityTab } from '../UserProfileDialog/ActivityTab'
 import { SettingsTab } from '../UserProfileDialog/SettingsTab'
+import { useUserActions } from '../../hooks/useUserActions'
+import { toast } from 'sonner'
 
 export default function InlineUserProfile({ onBack }: { onBack: () => void }) {
   const {
@@ -15,8 +17,21 @@ export default function InlineUserProfile({ onBack }: { onBack: () => void }) {
     setActiveTab,
     editMode,
     setEditMode,
-    setSelectedUser
+    setSelectedUser,
+    editForm,
+    setUpdating,
+    updating
   } = useUsersContext()
+
+  const { updateUser } = useUserActions({
+    onSuccess: (message) => {
+      toast.success(message)
+      setEditMode(false)
+    },
+    onError: (error) => {
+      toast.error(error)
+    }
+  })
 
   const handleBack = useCallback(() => {
     setEditMode(false)
@@ -25,14 +40,52 @@ export default function InlineUserProfile({ onBack }: { onBack: () => void }) {
     onBack()
   }, [onBack, setActiveTab, setEditMode, setSelectedUser])
 
+  const handleSaveProfile = useCallback(async () => {
+    if (!editForm?.name?.trim()) {
+      toast.error('Full name is required')
+      return
+    }
+    if (selectedUser?.id) {
+      setUpdating(true)
+      try {
+        await updateUser(selectedUser.id, editForm)
+      } catch (error) {
+        console.error('Update failed:', error)
+      } finally {
+        setUpdating(false)
+      }
+    }
+  }, [selectedUser?.id, editForm, updateUser, setUpdating])
+
   if (!selectedUser) return null
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <Button variant="outline" onClick={handleBack} className="mb-2">
-          ← Back to dashboard List
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={handleBack} className="mb-2">
+            ← Back to dashboard List
+          </Button>
+        </div>
+        {editMode && activeTab === 'details' && (
+          <div className="flex items-center gap-2 mb-2">
+            <Button
+              onClick={handleSaveProfile}
+              disabled={updating}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              {updating ? 'Saving...' : 'Save Changes'}
+            </Button>
+            <Button
+              onClick={() => setEditMode(false)}
+              disabled={updating}
+              variant="outline"
+              className="border-slate-300 text-slate-700 hover:bg-slate-50"
+            >
+              Cancel
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Header */}
