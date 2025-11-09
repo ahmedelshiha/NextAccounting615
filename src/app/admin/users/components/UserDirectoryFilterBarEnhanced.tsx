@@ -164,6 +164,18 @@ export function UserDirectoryFilterBarEnhanced({
           ariaLabel="Filter by status (multi-select)"
         />
 
+        {/* Export Button */}
+        {showExport && (
+          <ExportButton
+            users={filteredUsers.length > 0 ? filteredUsers : allUsers}
+            selectedUserIds={selectedUserIds}
+            filteredCount={filteredCount}
+            totalCount={totalCount}
+            variant="outline"
+            size="sm"
+          />
+        )}
+
         {/* Clear Filters Button */}
         {hasActiveFilters && (
           <Button
