@@ -287,18 +287,12 @@ export const POST = withTenantContext(async (request: NextRequest) => {
     const { name, email, role: userRole = 'USER', requiresOnboarding = true, phone, company, location, notes } = parsed.data
 
     // Check if user already exists using tenant-scoped compound key
-    let existingUser: any = null
-    if (tenantId) {
-      existingUser = await prisma.user.findFirst({
-        where: { tenantId, email },
-        select: { id: true }
-      })
-    } else {
-      existingUser = await prisma.user.findUnique({
-        where: { email },
-        select: { id: true }
-      })
-    }
+    const existingUser = tenantId
+      ? await prisma.user.findFirst({
+          where: { tenantId, email },
+          select: { id: true }
+        })
+      : null
 
     if (existingUser) {
       return NextResponse.json({ error: 'User with this email already exists' }, { status: 409 })
