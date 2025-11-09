@@ -9,6 +9,7 @@ import AdminSidebar from './AdminSidebar'
 import UserDirectorySection from './UserDirectorySection'
 import BulkActionsPanel from './BulkActionsPanel'
 import InlineCreateUser from './InlineCreateUser'
+import InlineUserProfile from './InlineUserProfile'
 import { BuilderHeaderSlot, BuilderMetricsSlot, BuilderSidebarSlot, BuilderFooterSlot } from './BuilderSlots'
 import { useIsBuilderEnabled } from '@/hooks/useIsBuilderEnabled'
 import { useUsersContext } from '../../contexts/UsersContextProvider'
@@ -20,7 +21,7 @@ import '../styles/admin-users-layout.css'
  * Main layout grid for AdminWorkBench
  * 
  * Layout structure:
- * ┌────────────────��────────────────────────────┐
+ * ┌─────────────────────────────────────────────┐
  * │        Sticky Header: QuickActionsBar        │
  * ├──────────────┬─────────────────��───────������─┤
  * │              │                            │
@@ -33,9 +34,9 @@ import '../styles/admin-users-layout.css'
  * │              │   │  UsersTable      │    │
  * │              │   │  (virtualized)   │    │
  * │              │   └──────────────────┘    │
- * ├──────────────┴──────────���─────────────────┤
+ * ├──────────────┴──────────����─────────────────┤
  * │  Sticky Footer: BulkActionsPanel (if sel) │
- * └────────────────���────────────��───────────────┘
+ * └────────────────���────────────────────────────┘
  * 
  * Responsive breakpoints:
  * - Desktop (≥1400px): Sidebar visible, 3-column layout
@@ -49,6 +50,7 @@ export default function AdminUsersLayout() {
   const [showImportWizard, setShowImportWizard] = useState(false)
   const [showCreateUserModal, setShowCreateUserModal] = useState(false)
   const [showCreateUserInline, setShowCreateUserInline] = useState(false)
+  const [inlineProfileUser, setInlineProfileUser] = useState<any | null>(null)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const isBuilderEnabled = useIsBuilderEnabled()
   const context = useUsersContext()
@@ -200,6 +202,12 @@ export default function AdminUsersLayout() {
                 context.refreshUsers?.()
               }}
             />
+          ) : inlineProfileUser ? (
+            <InlineUserProfile
+              onBack={() => {
+                setInlineProfileUser(null)
+              }}
+            />
           ) : (
             <>
               {/* KPI Metric Cards - Builder.io slot with fallback */}
@@ -213,6 +221,9 @@ export default function AdminUsersLayout() {
                   selectedUserIds={selectedUserIds}
                   onSelectionChange={setSelectedUserIds}
                   filters={filters}
+                  onViewProfileInline={(user) => {
+                    setInlineProfileUser(user)
+                  }}
                 />
               </div>
             </>

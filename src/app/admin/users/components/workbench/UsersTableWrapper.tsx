@@ -14,6 +14,7 @@ interface UsersTableWrapperProps {
   selectedUserIds?: Set<string>
   onSelectionChange?: (ids: Set<string>) => void
   filters?: Record<string, any>
+  onViewProfileInline?: (user: UserItem) => void
 }
 
 /**
@@ -25,7 +26,8 @@ interface UsersTableWrapperProps {
 export default function UsersTableWrapper({
   selectedUserIds = new Set(),
   onSelectionChange,
-  filters = {}
+  filters = {},
+  onViewProfileInline
 }: UsersTableWrapperProps) {
   const context = useUsersContext()
 
@@ -87,8 +89,12 @@ export default function UsersTableWrapper({
 
   const handleViewProfile = useCallback((user: UserItem) => {
     context.setSelectedUser(user)
-    context.setProfileOpen(true)
-  }, [context])
+    if (onViewProfileInline) {
+      onViewProfileInline(user)
+    } else {
+      context.setProfileOpen(true)
+    }
+  }, [context, onViewProfileInline])
 
   const { updateUser, updateUserRole } = useUserActions({ onRefetchUsers: context.refreshUsers, onSuccess: (msg) => toast.success(msg), onError: (err) => toast.error(err) })
 
