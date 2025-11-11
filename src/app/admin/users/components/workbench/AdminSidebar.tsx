@@ -81,15 +81,6 @@ export default function AdminSidebar({
     }))
   }, [])
 
-  const handleFilterChange = useCallback(
-    (key: string, value: any) => {
-      const newFilters = { ...filters, [key]: value }
-      setFilters(newFilters)
-      onFilterChange?.(newFilters)
-    },
-    [filters, onFilterChange]
-  )
-
   return (
     <div className="admin-sidebar-wrapper">
       {/* Header with close button (mobile) */}
