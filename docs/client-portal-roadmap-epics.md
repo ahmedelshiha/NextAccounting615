@@ -505,7 +505,7 @@ Phase 6 — Banking & Receipts
 1) Bank connectors + CSV fallback; transaction import
 2) Receipt inbox + OCR; auto-match and exception workflows
 
-Phase 7 — Country Workflows
+Phase 7 ��� Country Workflows
 1) UAE VAT/ESR/Corporate returns templates; validations
 2) KSA VAT/Zakat/WHT; device metadata placeholders
 3) Egypt VAT/e-Invoice; withholding rules
@@ -562,7 +562,7 @@ Phase 2.1 — Upcoming Compliances ✅ COMPLETE
 - [x] Mobile month‑chips screen
 - [x] Desktop two‑pane with filters and bulk actions
 
-Phase 2.2 — Features Hub ✅ COMPLETE
+Phase 2.2 — Features Hub ��� COMPLETE
 - [x] KYC Center forms + progress persistence
 - [x] Documents quick links + recent/starred
 - [x] Invoicing basic list/create
@@ -635,10 +635,19 @@ Phase 4 — Messaging & Support ⚠️ LARGELY COMPLETE (70%)
 - [ ] Advanced case management + routing
 - [ ] Live chat integration
 
-Phase 5 — Billing
-- [ ] Invoices UI + payment methods + webhooks
-- [ ] Dunning flows
-- [ ] Government payment reference capture + reconciliation
+Phase 5 — Billing ⚠️ MOSTLY COMPLETE (75%)
+- [x] Invoices CRUD (src/app/api/admin/invoices/route.ts)
+- [x] Invoices UI (src/app/admin/invoices/page.tsx)
+- [x] Stripe checkout integration (src/app/api/payments/checkout/route.ts)
+- [x] Stripe webhook handler with idempotency (src/app/api/payments/webhook/route.ts)
+- [x] Payment reconciliation cron (src/lib/cron/payments.ts)
+- [x] Payments UI (src/app/admin/payments/page.tsx)
+- [x] Portal billing UI (src/components/portal/AccountCenter/BillingSection.tsx)
+- [x] Invoice export (CSV)
+- [ ] Payment method vaulting (stored cards)
+- [ ] Advanced dunning automation
+- [ ] Government payment reference capture
+- [ ] Reconciliation dashboard
 
 Phase 6 — Banking & Receipts
 - [ ] Bank connectors + CSV fallback
