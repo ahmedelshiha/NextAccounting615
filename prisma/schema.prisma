@@ -914,9 +914,76 @@ model Attachment {
   tenant           Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   uploader         User?           @relation(fields: [uploaderId], references: [id])
   expenses         Expense[]
+  versions         DocumentVersion[]
+  links            DocumentLink[]
+  auditLogs        DocumentAuditLog[]
 
   @@index([serviceRequestId])
   @@index([tenantId])
+}
+
+model DocumentVersion {
+  id                  String          @id @default(cuid())
+  attachmentId        String
+  versionNumber       Int
+  name                String?
+  size                Int?
+  contentType         String?
+  key                 String?
+  url                 String?
+  uploadedAt          DateTime        @default(now())
+  uploaderId          String?
+  changeDescription   String?
+  tenantId            String
+  createdAt           DateTime        @default(now())
+
+  attachment          Attachment      @relation(fields: [attachmentId], references: [id], onDelete: Cascade)
+  uploader            User?           @relation("DocumentVersionUploader", fields: [uploaderId], references: [id])
+  tenant              Tenant          @relation("DocumentVersions", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([attachmentId, versionNumber])
+  @@index([attachmentId])
+  @@index([tenantId])
+  @@index([uploadedAt])
+}
+
+model DocumentLink {
+  id                  String          @id @default(cuid())
+  attachmentId        String
+  linkedToType        String          // 'FILING', 'TASK', 'SERVICE_REQUEST', etc.
+  linkedToId          String          // ID of the linked entity
+  linkedAt            DateTime        @default(now())
+  linkedBy            String?         // User who created the link
+  tenantId            String
+
+  attachment          Attachment      @relation(fields: [attachmentId], references: [id], onDelete: Cascade)
+  tenant              Tenant          @relation("DocumentLinks", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([attachmentId, linkedToType, linkedToId])
+  @@index([attachmentId])
+  @@index([linkedToType])
+  @@index([linkedToId])
+  @@index([tenantId])
+}
+
+model DocumentAuditLog {
+  id                  String          @id @default(cuid())
+  attachmentId        String
+  action              String          // 'upload', 'download', 'delete', 'star', 'link', etc.
+  details             Json?
+  performedBy         String?
+  performedAt         DateTime        @default(now())
+  ipAddress           String?
+  userAgent           String?
+  tenantId            String
+
+  attachment          Attachment      @relation(fields: [attachmentId], references: [id], onDelete: Cascade)
+  tenant              Tenant          @relation("DocumentAuditLogs", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([attachmentId])
+  @@index([performedAt])
+  @@index([tenantId])
+  @@index([action])
 }
 
 model WorkOrder {
