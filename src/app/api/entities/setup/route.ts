@@ -48,7 +48,7 @@ const _api_POST = async (request: NextRequest) => {
     const existingKey = await prisma.idempotencyKey.findUnique({
       where: {
         tenantId_key: {
-          tenantId: ctx.tenantId,
+          tenantId: ctx.tenantId!,
           key: input.idempotencyKey,
         },
       },
@@ -68,8 +68,8 @@ const _api_POST = async (request: NextRequest) => {
 
     // Create entity with setup wizard data
     const entity = await entityService.createEntity(
-      ctx.tenantId,
-      session.user.id,
+      ctx.tenantId!,
+      userId,
       {
         country: input.country,
         name: input.businessName,
