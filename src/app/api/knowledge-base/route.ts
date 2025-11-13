@@ -35,6 +35,10 @@ export const GET = withTenantContext(
     try {
       const { userId, tenantId } = requireTenantContext()
 
+      if (!userId || !tenantId) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      }
+
       // Parse filters
       const queryParams = Object.fromEntries(request.nextUrl.searchParams)
       const filters = ArticleFilterSchema.parse(queryParams)
