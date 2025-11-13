@@ -72,20 +72,21 @@ export const UserForm = React.forwardRef<HTMLFormElement, UserFormProps>(
     )
     const [isSubmitting, setIsSubmitting] = useState(false)
 
-    const schema = (mode === 'create' ? UserCreateSchema : UserEditSchema) as any
+    // Type-safe schema selection based on mode
+    const schema = mode === 'create' ? UserCreateSchema : UserEditSchema
     const {
       register,
       handleSubmit,
       watch,
       setValue,
       formState: { errors },
-    } = useForm({
+    } = useForm<UserCreate | UserEdit>({
       resolver: zodResolver(schema),
-      defaultValues: initialData || {
+      defaultValues: (initialData || {
         role: 'CLIENT',
         isActive: true,
         requiresOnboarding: mode === 'create',
-      },
+      }) as any, // Safe here since we're setting defaults for both schemas
     })
 
     const role = watch('role')
